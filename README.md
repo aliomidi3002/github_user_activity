@@ -39,6 +39,6 @@ Fetching activity for: jadijadi
 
 ---
 
-## License
+## Based on
 
-MIT
+[Github User activity](https://roadmap.sh/projects/github-user-activity)
