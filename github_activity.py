@@ -1,5 +1,6 @@
 import sys
 import urllib.request
+import urllib.error
 import json
 
 
@@ -11,7 +12,16 @@ def fetch_events(username):
             data = response.read()
             return json.loads(data)
     except urllib.error.HTTPError as e:
-        print(f"Error: {e.code} - User not found or API error")
+        if e.code == 404:
+            print(f"Error: User '{username}' not found on GitHub.")
+        else:
+            print(f"Error: HTTP {e.code} - {e.reason}")
+        return None
+    except urllib.error.URLError as e:
+        print(f"Error: No internet connection or DNS failure - {e.reason}")
+        return None
+    except json.JSONDecodeError:
+        print("Error: Failed to parse GitHub API response.")
         return None
 
 
@@ -38,7 +48,7 @@ def format_event(event):
 def print_events(events):
     """Print formatted GitHub events."""
     if not events:
-        print("No events found.")
+        print("No public events found for this user.")
         return
     
     for event in events:
@@ -54,7 +64,7 @@ def main():
     print(f"Fetching activity for: {username}\n")
     
     events = fetch_events(username)
-    if events:
+    if events is not None:
         print_events(events)
 
 
